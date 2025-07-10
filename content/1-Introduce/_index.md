@@ -6,7 +6,6 @@ chapter: false
 pre: " <b>1.</b> "
 ---
 
-## Introduction
 
 ### Objective  
 In today's digital era, security threats to cloud infrastructure are becoming increasingly common and sophisticated. This project is designed to build a system that **automatically detects and responds** to suspicious activities on EC2 instances, helping to minimize security risks and enhance overall system protection.

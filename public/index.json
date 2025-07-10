@@ -1,132 +1,132 @@
 [
 {
-	"uri": "//localhost:1313/",
+	"uri": "https://khanhtuan0705.github.io/",
 	"title": "Automated Security with AWS GuardDuty and Lambda",
 	"tags": [],
 	"description": "",
 	"content": "Automated Security with AWS GuardDuty and Lambda Overall In this lab, you’ll learn how to set up an automated attack detection and response system using AWS services like GuardDuty, Lambda, SNS, and EC2. The system will detect suspicious behavior, stop EC2 instances, and send alerts via SNS when an attack is detected.\nContent Introduction Preparation Threat Detection with GuardDuty Send Notifications with SNS Topic Automate Responses with AWS Lambda Demo and Testing Cleanup Resources "
 },
 {
-	"uri": "//localhost:1313/5-automateresponseswithlambda/5.1-createlambdafunction/",
+	"uri": "https://khanhtuan0705.github.io/5-automateresponseswithlambda/5.1-createlambdafunction/",
 	"title": "Create Lambda Function",
 	"tags": [],
 	"description": "",
 	"content": "Create Lambda Function HandleGuardDutyFinding Navigate to the AWS Lambda Console to begin creating a new Lambda function.\nIn the Lambda console, select Create function. In the Create function screen: Select Author from scratch. Function name: Enter the Lambda function name as HandleGuardDutyFinding. Runtime: Select Python 3.12 (or the latest version). Click Create function to create the function. Add the source code for the Lambda function after the function is created: Scroll down to the Code source section. Paste the following code into the lambda_function.py file. import json import boto3 # Initialize AWS clients ec2 = boto3.client(\u0026#39;ec2\u0026#39;) sns = boto3.client(\u0026#39;sns\u0026#39;) # Define your target EC2 instance ID and SNS topic ARN import boto3 import json # Tạo client EC2 và SNS từ AWS SDK ec2 = boto3.client(\u0026#39;ec2\u0026#39;) sns = boto3.client(\u0026#39;sns\u0026#39;) # ID của instance EC2 và ARN của SNS Topic INSTANCE_ID = \u0026#39;\u0026#39; SNS_TOPIC_ARN = \u0026#39;\u0026#39; def lambda_handler(event, context): # In thông tin sự kiện GuardDuty nhận được print(\u0026#34;GuardDuty Event:\u0026#34;) print(json.dumps(event, indent=2)) # Gửi thông báo qua SNS sns.publish( TopicArn=SNS_TOPIC_ARN, Subject=\u0026#39;GuardDuty Alert\u0026#39;, Message=f\u0026#39;GuardDuty detected suspicious behavior. Stopping EC2: {INSTANCE_ID}\u0026#39; ) # Dừng instance EC2 có ID đã chỉ định ec2.stop_instances(InstanceIds=[INSTANCE_ID]) # Trả về kết quả sau khi thực hiện các hành động return { \u0026#39;statusCode\u0026#39;: 200, \u0026#39;body\u0026#39;: json.dumps(\u0026#39;EC2 has been stopped and an email alert has been sent.\u0026#39;) } Enter the EC2 instance ID and the SNS Topic ARN. Click Deploy. Add permissions for Lambda: Click on Configuration. Select Permissions. Click the blue text under Role name to assign permissions to Lambda. Click Add Permissions. Select Attach policies. Click on Configuration. Select Permissions. Click the blue text under Role name to assign permissions to Lambda. In Other permissions policies: Search for ec2 and check AmazonEC2FullAccess. Search for sns and check AmazonSNSFullAccess. After selecting both permissions, click Add permissions. After adding, you will see the two permissions as shown in the image. "
 },
 {
-	"uri": "//localhost:1313/4-sendnotificationswithsns/4.1-createsnstopic/",
+	"uri": "https://khanhtuan0705.github.io/4-sendnotificationswithsns/4.1-createsnstopic/",
 	"title": "Create SNS Topic",
 	"tags": [],
 	"description": "",
 	"content": "Create SNS Topic GuardDutyAlertTopic Access the AWS SNS Console to start the process of creating a new SNS Topic.\nOn the SNS console, select Topics and click Create topic in the top-right corner. In the Create topic screen: Choose Standard for the topic type. Enter the topic name as GuardDutyAlertTopic. Choose a Display name for SNS messages, for example: GuardDuty Alerts. Configure the access permissions and notifications: Enter a description for the topic (optional). Configure the access permissions (you can leave the defaults if not needed). Click Create topic to finish. "
 },
 {
-	"uri": "//localhost:1313/2-prerequiste/2.1-createec2/2.1.1-createvpc/",
+	"uri": "https://khanhtuan0705.github.io/2-prerequiste/2.1-createec2/2.1.1-createvpc/",
 	"title": "Create VPC",
 	"tags": [],
 	"description": "",
 	"content": "Create VPC SecurityVPC Go to the AWS VPC Console to begin creating a new VPC.\nIn the VPC dashboard, select Your VPCs and click Create VPC at the top-right corner. On the Create VPC screen: Select VPC and more so AWS automatically creates the associated resources (subnets, route table, internet gateway, etc.). Enter the name: SecurityVPC IPv4 CIDR block: 10.0.0.0/16 Select No IPv6 CIDR block Configure availability zones and subnets: Availability Zones: select 1 Public Subnets: select 1 Private Subnets: select 0 Configure advanced settings: NAT Gateway: select None VPC Endpoints: select None Make sure to check: Enable DNS hostnames Enable DNS resolution Click Create VPC to finish "
 },
 {
-	"uri": "//localhost:1313/2-prerequiste/2.1-createec2/",
+	"uri": "https://khanhtuan0705.github.io/2-prerequiste/2.1-createec2/",
 	"title": "Prepare VPC and EC2",
 	"tags": [],
 	"description": "",
 	"content": "In this step, we will need to create a VPC. After creating the VPC, a public subnet will be automatically created. Next, we will create 2 Linux EC2 instances in the public subnet:\ntarget EC2: The target machine that will be attacked and tested for security. attack EC2: The attack machine that will simulate intrusion attempts on the target EC2. The architecture overview after completing this step will look like this:\nTo learn how to create EC2 instances and VPC with public subnet, you can refer to the following lab resources:\nIntroduction to Amazon EC2 Working with Amazon VPC Content Create VPC Create Security Group Create target EC2 instance Create attack EC2 instance "
 },
 {
-	"uri": "//localhost:1313/1-introduce/",
+	"uri": "https://khanhtuan0705.github.io/1-introduce/",
 	"title": "Introduction",
 	"tags": [],
 	"description": "",
-	"content": "Introduction Objective In today\u0026rsquo;s digital era, security threats to cloud infrastructure are becoming increasingly common and sophisticated. This project is designed to build a system that automatically detects and responds to suspicious activities on EC2 instances, helping to minimize security risks and enhance overall system protection.\nSystem Overview The system leverages a combination of AWS services to ensure monitoring and response processes are performed automatically and efficiently:\nAmazon GuardDuty: Detects abnormal behaviors on EC2 such as port scans, unauthorized access, etc. Amazon EventBridge: Captures events from GuardDuty and triggers automated responses. AWS Lambda: Handles GuardDuty findings, performs actions such as stopping EC2 instances or sending alerts. Amazon SNS: Sends alerts to administrators via email or SMS. These services work together to form a tightly integrated system for monitoring, automated response, and alerting.\nUse Cases Detecting and responding to port scanning attacks. Stopping EC2 instances when suspicious activity is detected. Instantly notifying administrators of security-related events. Automating the entire incident response process. The system not only enables timely detection of threats but also minimizes damage by proactively executing preventive actions — ensuring cloud infrastructure safety and resilience.\n"
+	"content": "Objective In today\u0026rsquo;s digital era, security threats to cloud infrastructure are becoming increasingly common and sophisticated. This project is designed to build a system that automatically detects and responds to suspicious activities on EC2 instances, helping to minimize security risks and enhance overall system protection.\nSystem Overview The system leverages a combination of AWS services to ensure monitoring and response processes are performed automatically and efficiently:\nAmazon GuardDuty: Detects abnormal behaviors on EC2 such as port scans, unauthorized access, etc. Amazon EventBridge: Captures events from GuardDuty and triggers automated responses. AWS Lambda: Handles GuardDuty findings, performs actions such as stopping EC2 instances or sending alerts. Amazon SNS: Sends alerts to administrators via email or SMS. These services work together to form a tightly integrated system for monitoring, automated response, and alerting.\nUse Cases Detecting and responding to port scanning attacks. Stopping EC2 instances when suspicious activity is detected. Instantly notifying administrators of security-related events. Automating the entire incident response process. The system not only enables timely detection of threats but also minimizes damage by proactively executing preventive actions — ensuring cloud infrastructure safety and resilience.\n"
 },
 {
-	"uri": "//localhost:1313/5-automateresponseswithlambda/5.2-createeventbridgerule/",
+	"uri": "https://khanhtuan0705.github.io/5-automateresponseswithlambda/5.2-createeventbridgerule/",
 	"title": "Create EventBridge Rule to Link GuardDuty to Lambda",
 	"tags": [],
 	"description": "",
 	"content": "Create EventBridge Rule to Link GuardDuty to Lambda Navigate to the AWS EventBridge Console to begin creating a new EventBridge Rule.\nIn the EventBridge console, select Rules from the left-hand menu and click Create rule at the top-right corner. In the Define rule detail screen: Name: Enter the rule name as GuardDutyTriggerLambda. Description: Add a description for the rule such as Trigger Lambda when GuardDuty detects a security finding. Event bus: Select default. Rule type: Select Rule with an event pattern. Click Next to continue. In the Build event pattern section, select Use pattern form to create the event from the available pattern.\nEvent source: Select AWS services. AWS service: Select GuardDuty. Event type: Select GuardDuty Finding. After configuring, you will see the GuardDuty Finding event will be sent to the Lambda function when a threat is detected. The Event Pattern will appear as follows: { \u0026#34;source\u0026#34;: [\u0026#34;aws.guardduty\u0026#34;], \u0026#34;detail-type\u0026#34;: [\u0026#34;GuardDuty Finding\u0026#34;] } In the Select target section: Under Select a target, select AWS service. Under Target location, select Target in this account. Then, select Lambda function in the Function section and enter the Lambda function name as HandleGuardDutyFinding. In the Configure version/alias section, you can leave it as default if you don’t need to select a version or alias. Configure Permissions: Select Use execution role (recommended) to allow Lambda to access the required resources. Select Create a new role for this specific resource if you want to create a new role for this event. Name the Execution role as Amazon_EventBridge_Invoke_Lambda. After completing the configuration, click Next to continue. Click Next once more and click Create rule to complete the creation process. "
 },
 {
-	"uri": "//localhost:1313/4-sendnotificationswithsns/4.2-createsnssubscription/",
+	"uri": "https://khanhtuan0705.github.io/4-sendnotificationswithsns/4.2-createsnssubscription/",
 	"title": "Create SNS Subscription",
 	"tags": [],
 	"description": "",
 	"content": "Create SNS Subscription Access the Amazon SNS Console and select Subscriptions from the left menu. Click Create subscription. In the Create subscription screen: Choose Topic ARN from the dropdown menu, search for and select the SNS Topic you created in the previous step (e.g., GuardDutyAlertTopic). Choose Protocol (e.g., Email if you want to receive notifications via email). Enter the Endpoint, which is the address where you want to receive notifications (e.g., your email address). Click Create subscription to create the subscription. After creating the subscription, you will receive a confirmation email. In the email, you will see a message: Click Confirm subscription to confirm your subscription. When you click it, the following screen will appear, indicating that the subscription is confirmed. If you no longer wish to receive notifications, click the \u0026ldquo;click here to unsubscribe\u0026rdquo; link. After confirming, you have successfully created the SNS Subscription and can now receive notifications from SNS when new events occur from GuardDuty. "
 },
 {
-	"uri": "//localhost:1313/2-prerequiste/2.1-createec2/2.1.2-createtargetec2linux/",
+	"uri": "https://khanhtuan0705.github.io/2-prerequiste/2.1-createec2/2.1.2-createtargetec2linux/",
 	"title": "Create TargetEC2",
 	"tags": [],
 	"description": "",
 	"content": "Create EC2 TargetEC2 Access the AWS EC2 Console to start the process of creating a new EC2 instance.\nOn the EC2 console screen, select Instances and click Launch instances in the top right corner. In the Launch an instance screen: Choose a Name for the instance as TargetEC2. Select Amazon Linux under Application and OS Images (Amazon Machine Image). In the Amazon Machine Image (AMI) section: Click Select to choose the Amazon Linux 2 operating system. Choose Amazon Linux 2 AMI. In the Instance Type section: Select t2.micro (for Free Tier usage). Click Create new key pair in the Key pair (login) section. In the Create Key Pair section: Enter Key pair name as TargetEC2Key. Select RSA for Key pair type. Choose .pem as the Private key file format (to use with OpenSSH). Click Create key pair. In the Network Settings section, click Edit:\nFor VPC, choose SecurityVPC. For Subnet, choose SecurityVPC-subnet-public1-ap-southeast-1a. Ensure Auto-assign public IP is selected as Enable. In the Firewall (security groups) section: Click Create security group. Enter SecuritySG as the security group name. Description: Allow SSH for attack simulation. Configure inbound rules with SSH to allow access from 0.0.0.0/0. In the Inbound Security Group Rules, in the Network Settings section, add a new rule: Type: Select ssh. Protocol: Select TCP. Port Range: Enter 22. Source: Select Anywhere (or enter 0.0.0.0/0 to allow all IP addresses). Description (optional): You can enter a description like SSH for attack simulation. Once completed, click Launch instance in the Summary section to initiate the EC2 instance. After clicking Launch instance, wait for 1 to 2 minutes. The status of the EC2 instance will change to Running, indicating the virtual machine has been successfully created. "
 },
 {
-	"uri": "//localhost:1313/2-prerequiste/",
+	"uri": "https://khanhtuan0705.github.io/2-prerequiste/",
 	"title": "Preparation Steps",
 	"tags": [],
 	"description": "",
 	"content": "\rYou need to create 2 Linux instances in the public subnet to complete this lab. These machines will be target EC2 and attack EC2.\nTo learn how to create EC2 instances and a VPC with public subnets, you can refer to the following resources:\nIntroduction to Amazon EC2 Working with Amazon VPC In this preparation step, we will configure a security solution for EC2 using GuardDuty. Specifically, we will create two EC2 instances:\ntarget EC2: This instance will be the system that needs to be protected, with an external IP to test its security posture. attack EC2: This instance will simulate attacks and scan open ports from an external IP to the target EC2. Content Prepare VPC and EC2 "
 },
 {
-	"uri": "//localhost:1313/3-threatdetectionwithguardduty/3.1-enableguardduty/",
+	"uri": "https://khanhtuan0705.github.io/3-threatdetectionwithguardduty/3.1-enableguardduty/",
 	"title": "Activate AWS GuardDuty",
 	"tags": [],
 	"description": "",
 	"content": "\rActivate AWS GuardDuty to start monitoring and detecting threats in your AWS environment.\nHow to Activate GuardDuty When you activate GuardDuty, the system will begin analyzing activities on EC2, S3, and other AWS services to detect threats and suspicious behaviors. This is an important step to ensure that your AWS resources are optimally protected.\nSteps to Activate AWS GuardDuty: Log in to the AWS Management Console: Access the AWS GuardDuty Console in the AWS Management Console. Select Amazon GuardDuty - all features and click \u0026ldquo;Get started\u0026rdquo; to proceed to the next step. Click the \u0026ldquo;Enable GuardDuty\u0026rdquo; button to activate the service: New accounts get a free 30-day trial from AWS.\nIf it\u0026rsquo;s your first time using it, you\u0026rsquo;ll see an Enable GuardDuty button. Click this button to start the activation process. Confirm the configuration and start scanning: GuardDuty will automatically start scanning your resources and monitoring activities on EC2, S3, and other AWS services. Once activated, GuardDuty will begin detecting potential threats and send alerts if any suspicious behavior is found. Check the findings: After GuardDuty is active, you can go to the Findings section to view alerts and detected threats. Here, you\u0026rsquo;ll see details about any threats that have been identified. References: AWS GuardDuty Official Documentation How to use AWS GuardDuty "
 },
 {
-	"uri": "//localhost:1313/2-prerequiste/2.1-createec2/2.1.3-createattackec2linux/",
+	"uri": "https://khanhtuan0705.github.io/2-prerequiste/2.1-createec2/2.1.3-createattackec2linux/",
 	"title": "Create AttackEC2",
 	"tags": [],
 	"description": "",
 	"content": "Create EC2 AttackEC2 Access the AWS EC2 Console to start the process of creating a new EC2 instance.\nOn the EC2 console screen, select Instances and click Launch instances in the top right corner. In the Launch an instance screen: Choose a Name for the instance as AttackEC2. Select Amazon Linux under Application and OS Images (Amazon Machine Image). In the Amazon Machine Image (AMI) section: Click Select to choose the Amazon Linux 2 operating system. Choose Amazon Linux 2 AMI. In the Instance Type section: Select t2.micro (for Free Tier usage). Click Create new key pair in the Key pair (login) section. In the Create Key Pair section: Enter Key pair name as AttackEC2Key. Select RSA for Key pair type. Choose .pem as the Private key file format (to use with OpenSSH). Click Create key pair. In the Network Settings section, click Edit:\nFor VPC, choose SecurityVPC. For Subnet, choose SecurityVPC-subnet-public1-ap-southeast-1a. Ensure Auto-assign public IP is selected as Enable. In the Firewall (security groups) section: Click Create security group. Enter AttackSG as the security group name. Description: Allow SSH for attack simulation. Configure inbound rules with SSH to allow access from 0.0.0.0/0. In the Inbound Security Group Rules, in the Network Settings section, add a new rule: Type: Select ssh. Protocol: Select TCP. Port Range: Enter 22. Source: Select Anywhere (or enter 0.0.0.0/0 to allow all IP addresses). Description (optional): You can enter a description like SSH for attack simulation. Once completed, click Launch instance in the Summary section to initiate the EC2 instance. After clicking Launch instance, wait for 1 to 2 minutes. The status of the EC2 instance will change to Running, indicating the virtual machine has been successfully created. "
 },
 {
-	"uri": "//localhost:1313/3-threatdetectionwithguardduty/",
+	"uri": "https://khanhtuan0705.github.io/3-threatdetectionwithguardduty/",
 	"title": "Threat Detection with GuardDuty",
 	"tags": [],
 	"description": "",
 	"content": "\rTo detect threats and ensure the security of EC2, we will enable AWS GuardDuty.\nIntroduction to GuardDuty GuardDuty is a security service from AWS that helps detect potential threats and suspicious behavior within your AWS environment. It monitors the activity of EC2, S3, and other AWS services, providing alerts when it detects any threats.\nBenefits:\nDetect Threats: GuardDuty helps detect attacks such as SSH brute force, unauthorized connections, or other suspicious behaviors. Better Security: GuardDuty helps protect EC2 instances, S3 buckets, and other AWS services by identifying unusual activity. Content Enable AWS GuardDuty "
 },
 {
-	"uri": "//localhost:1313/4-sendnotificationswithsns/",
+	"uri": "https://khanhtuan0705.github.io/4-sendnotificationswithsns/",
 	"title": "Send Notifications with SNS Topic",
 	"tags": [],
 	"description": "",
 	"content": "\rAmazon Simple Notification Service (SNS) is a powerful cloud messaging service from AWS that helps send notifications to systems or users through various channels such as email, SMS, HTTP/HTTPS endpoints, or other services. SNS supports real-time notifications, is highly scalable, and is easy to integrate with other AWS services like Lambda and GuardDuty.\nIntroduction to SNS SNS is an AWS service that helps you send notifications to systems or users via email, SMS, HTTP/HTTPS endpoints, or other AWS services. SNS enhances the ability to respond quickly to important events or potential threats, ensuring systems are continuously monitored and protected.\nBenefits:\nFast Notification Delivery: SNS allows you to send notifications to a large number of recipients in a short amount of time. Easy Integration: SNS can be easily integrated with AWS services like Lambda, CloudWatch, and GuardDuty to automatically send notifications when events occur. Content Create SNS Topic Create SNS Subscription "
 },
 {
-	"uri": "//localhost:1313/5-automateresponseswithlambda/",
+	"uri": "https://khanhtuan0705.github.io/5-automateresponseswithlambda/",
 	"title": "Automate Responses with AWS Lambda",
 	"tags": [],
 	"description": "",
 	"content": "\rAWS Lambda helps you automate responses when events occur in AWS. You can use Lambda to trigger automated actions when GuardDuty detects threats.\nIntroduction to AWS Lambda AWS Lambda is a serverless computing service from AWS that allows you to run code without managing servers. Lambda helps you process events in real-time and perform automated actions when events occur from other AWS services like GuardDuty, S3, and SNS.\nBenefits:\nNo server management required: Lambda runs code automatically when an event occurs without requiring you to manage servers. Automatic scalability: Lambda automatically scales to handle requests, saving resources and costs. Integration with AWS services: Lambda can easily integrate with AWS services like GuardDuty to perform actions when a threat is detected. Content Create Lambda Function Create EventBridge Rule to Connect GuardDuty with Lambda "
 },
 {
-	"uri": "//localhost:1313/6-testinganddemo/",
+	"uri": "https://khanhtuan0705.github.io/6-testinganddemo/",
 	"title": "Demo and Testing",
 	"tags": [],
 	"description": "",
 	"content": "Demo Model Implementing AWS Security Solution with GuardDuty, Lambda, SNS, and EventBridge In this model, we will implement a security solution using GuardDuty, Lambda, SNS, and EventBridge. Two EC2 instances will be created: a target-ec2 (target machine) to test security and an attack-ec2 (hacker machine) with a suspicious IP. When GuardDuty detects a threat from attack-ec2, EventBridge will trigger Lambda to take automated actions. SNS will send a warning notification to the administrator via email, helping monitor and respond quickly to security events.\nConnect EC2 Instances You can refer to how to connect EC2 using MobaXterm instead of using GIT. In this case, we will use MobaXterm to connect to the EC2 machine. If you\u0026rsquo;re not sure how, you can refer to the guide at Connect Linux Instance with MobaXterm.\nConnect to target-ec2\nConnect to attack-ec2\nInstall nmap on attack-ec2\nOn the attack-ec2, you need to install the nmap tool to perform port scanning. To install nmap, use the following command:\nsudo yum install nmap -y Scan the target-ec2 ports from attack-ec2\nAfter successfully installing nmap, you can scan the ports of the target-ec2 using the following command on the attack-ec2 machine:\nnmap -Pn -p 1-100 54.255.243.8 You can run this command about 1 to 10 times to scan the ports of the target-ec2. After a successful port scan, the result is Results After Port Scan After the port scan is successful, wait for a while for GuardDuty to detect it, as shown in the image\nThis is a warning that EC2 instance i-0d87fe691868ad547 is performing an outbound port scan to a remote server with IP 54.255.243.8 (from attack to target). At the same time, you will also receive an email alert because you have set it up in the create lambda function section. Notification: GuardDuty detected suspicious behavior. Stopping EC2: i-0a40480e4ffe67c36 Finally, the TargetEC2 instance has been shut down due to the detection of suspicious behavior In this test, we perform a port scan to allow GuardDuty to detect threats and then use Lambda to automatically shut down the EC2 instance. Additionally, you can experiment with other attack methods such as DDoS or other forms of attacks to evaluate GuardDuty\u0026rsquo;s detection capabilities and test how Lambda responds to various threats.\n"
 },
 {
-	"uri": "//localhost:1313/7-cleanup/",
+	"uri": "https://khanhtuan0705.github.io/7-cleanup/",
 	"title": "Cleanup Resources",
 	"tags": [],
 	"description": "",
 	"content": "Cleanup AWS Resources After completing the deployment and testing process, we need to clean up the resources to avoid unnecessary costs. Below are the steps to clean up the AWS resources we have used:\nDelete EC2 Instances\nAccess the AWS EC2 Console to delete unused instances. Select Instances in the AWS EC2 Console. Select both hacker-ec2 and user-ec2 instances. Select Instance state, then choose Terminate instance. Click Terminate to confirm the deletion. Delete SNS Topic\nAccess the AWS SNS Console to delete the GuardDutyAlertTopic topic. Select Topics, find the GuardDutyAlertTopic, and click Delete. Confirm by entering delete me and click delete. Delete Lambda Function\nAccess the AWS Lambda Console to delete the HandleGuardDutyFinding Lambda function. Select Functions, find the HandleGuardDutyFinding function, and click Delete. Confirm by entering confirm and click delete. Delete EventBridge Rule\nAccess the AWS EventBridge Console to delete the GuardDutyTriggerLambda rule. Select Rules, find the GuardDutyTriggerLambda rule, and click Delete. Confirm by entering delete and click delete. Delete IAM Role\nAccess the IAM Console to delete the HandleGuardDutyFinding-role. Select Roles, find the HandleGuardDutyFinding-role, and click Delete. Confirm by entering name role and click delete. Delete VPC\nAccess the AWS VPC Console to delete SecurityVPC. Select Your VPCs, find the SecurityVPC, then select Actions. Choose Delete VPC and confirm. Delete GuardDuty\nAccess the AWS GuardDuty Console to delete the GuardDuty service. Select Settings in the GuardDuty Console. Click Disable, then click Disable to confirm. Notes After deleting the resources, you can also check your AWS account to ensure that no resources are left behind and no unwanted costs are incurred.\nCleaning up resources after completing testing is very important to avoid unnecessary costs. Make sure all services have been deleted and no resources are left behind.\n"
 },
 {
-	"uri": "//localhost:1313/categories/",
+	"uri": "https://khanhtuan0705.github.io/categories/",
 	"title": "Categories",
 	"tags": [],
 	"description": "",
 	"content": ""
 },
 {
-	"uri": "//localhost:1313/tags/",
+	"uri": "https://khanhtuan0705.github.io/tags/",
 	"title": "Tags",
 	"tags": [],
 	"description": "",

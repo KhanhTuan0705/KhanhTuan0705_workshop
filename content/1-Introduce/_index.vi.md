@@ -6,7 +6,6 @@ chapter: false
 pre: " <b>1.</b> "
 ---
 
-## Giới thiệu
 
 ### Mục tiêu  
 Trong thời đại hiện nay, các mối đe dọa bảo mật đối với cơ sở hạ tầng đám mây đang ngày càng trở nên phổ biến và tinh vi. Dự án này được thiết kế nhằm xây dựng một hệ thống **phát hiện và phản ứng tự động** với các hành vi đáng ngờ trên EC2, giúp giảm thiểu rủi ro và tăng cường bảo mật cho hệ thống.
