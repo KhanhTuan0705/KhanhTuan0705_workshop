@@ -1,0 +1,134 @@
+[
+{
+	"uri": "//localhost:1313/vi/2-prerequiste/2.1-createec2/",
+	"title": "Chuẩn bị VPC và EC2",
+	"tags": [],
+	"description": "",
+	"content": "Trong bước này, chúng ta sẽ cần tạo một VPC. Sau khi tạo VPC, subnet public sẽ được tự động tạo. Tiếp theo, chúng ta sẽ tạo 2 EC2 instances Linux nằm trong public subnet:\ntarget EC2: Máy mục tiêu sẽ bị tấn công và kiểm tra bảo mật. attack EC2: Máy tấn công sẽ giả lập các hành vi xâm nhập vào target EC2. Tổng quan kiến trúc sau khi các bạn hoàn tất bước này sẽ như sau:\nĐể tìm hiểu cách tạo các EC2 instance và VPC, bạn có thể tham khảo các bài lab dưới đây:\nGiới thiệu về Amazon EC2 Làm việc với Amazon VPC Nội dung Tạo VPC Tạo security group Tạo máy chủ target EC2 Tạo máy chủ attack EC2 "
+},
+{
+	"uri": "//localhost:1313/vi/5-automateresponseswithlambda/5.1-createlambdafunction/",
+	"title": "Tạo hàm Lambda",
+	"tags": [],
+	"description": "",
+	"content": "Tạo hàm Lambda HandleGuardDutyFinding Truy cập vào AWS Lambda Console để bắt đầu quá trình tạo hàm Lambda mới.\nTrên giao diện điều khiển Lambda, chọn Create function. Trong màn hình Create function: Chọn Author from scratch. Function name: Nhập tên hàm Lambda là HandleGuardDutyFinding. Runtime: Chọn Python 3.12 (hoặc phiên bản mới nhất). Nhấn Create function: để tạo hàm. Thêm mã nguồn cho hàm Lambda, sau khi tạo xong lambda function: Kéo xuống phần Code source. Dán đoạn code này vào file lambda_function.py import json import boto3 # Initialize AWS clients ec2 = boto3.client(\u0026#39;ec2\u0026#39;) sns = boto3.client(\u0026#39;sns\u0026#39;) # Define your target EC2 instance ID and SNS topic ARN import boto3 import json # Tạo client EC2 và SNS từ AWS SDK ec2 = boto3.client(\u0026#39;ec2\u0026#39;) sns = boto3.client(\u0026#39;sns\u0026#39;) # ID của instance EC2 và ARN của SNS Topic INSTANCE_ID = \u0026#39;\u0026#39; SNS_TOPIC_ARN = \u0026#39;\u0026#39; def lambda_handler(event, context): # In thông tin sự kiện GuardDuty nhận được print(\u0026#34;GuardDuty Event:\u0026#34;) print(json.dumps(event, indent=2)) # Gửi thông báo qua SNS sns.publish( TopicArn=SNS_TOPIC_ARN, Subject=\u0026#39;GuardDuty Alert\u0026#39;, Message=f\u0026#39;GuardDuty detected suspicious behavior. Stopping EC2: {INSTANCE_ID}\u0026#39; ) # Dừng instance EC2 có ID đã chỉ định ec2.stop_instances(InstanceIds=[INSTANCE_ID]) # Trả về kết quả sau khi thực hiện các hành động return { \u0026#39;statusCode\u0026#39;: 200, \u0026#39;body\u0026#39;: json.dumps(\u0026#39;EC2 has been stopped and an email alert has been sent.\u0026#39;) } Điền id của instance EC2 và ARN của SNS Topic . Nhấn Deploy. Thêm quyền cho Lambda Nhấn chọn Configuration . Chọn Permissions. Chọn dòng chữ màu xanh phía dưới Role name để cấp quyền cho Lambda. Nhấn chọn Add Permissions . Chọn Attach policies. Nhấn chọn Configuration . Chọn Permissions. Chọn dòng chữ màu xanh phía dưới Role name để cấp quyền cho Lambda. Trong Other permissions policies : Tại seach ec2 tích vào AmazonEC2FullAccess Tại seach sn tích vào AmazonSNSFullAccess Sau khi tích chọn hai quyền thì ta nhấn chọn Add permissions Sau khi thêm ta được hai quyền như hình "
+},
+{
+	"uri": "//localhost:1313/vi/4-sendnotificationswithsns/4.1-createsnstopic/",
+	"title": "Tạo SNS Topic",
+	"tags": [],
+	"description": "",
+	"content": "Tạo SNS Topic GuardDutyAlertTopic Truy cập vào AWS SNS Console để bắt đầu quá trình tạo SNS Topic mới.\nTrên giao diện điều khiển SNS, chọn Topics và nhấn Create topic ở góc trên bên phải. Trong màn hình Create topic: Chọn Standard cho loại topic. Nhập tên topic là GuardDutyAlertTopic. Chọn Display name (Tên hiển thị) cho SNS message, ví dụ: GuardDuty Alerts. Cấu hình các quyền truy cập và thông báo: Nhập mô tả cho topic (tuỳ chọn). Cấu hình các quyền truy cập (mặc định có thể bỏ qua nếu không cần). Nhấn Create topic để hoàn tất. "
+},
+{
+	"uri": "//localhost:1313/vi/2-prerequiste/2.1-createec2/2.1.1-createvpc/",
+	"title": "Tạo VPC",
+	"tags": [],
+	"description": "",
+	"content": "Tạo VPC SecurityVPC Truy cập vào AWS VPC Console để bắt đầu quá trình tạo VPC mới.\nTrên giao diện điều khiển VPC, chọn Your VPCs và nhấn Create VPC ở góc trên bên phải. Trong màn hình Create VPC: Chọn VPC and more để AWS tự động tạo các tài nguyên kèm theo (subnet, route table, internet gateway,\u0026hellip;). Nhập tên là SecurityVPC. CIDR IPv4: 10.0.0.0/16 Chọn No IPv6 CIDR block Cấu hình vùng khả dụng và subnet: Availability Zones: chọn 1 Public Subnets: chọn 1 Private Subnets: chọn 0 Cấu hình tuỳ chọn nâng cao: NAT Gateway: chọn None VPC Endpoints: chọn None Đảm bảo tick chọn: Enable DNS hostnames Enable DNS resolution Nhấn Create VPC để hoàn tất "
+},
+{
+	"uri": "//localhost:1313/vi/1-introduce/",
+	"title": "Giới thiệu",
+	"tags": [],
+	"description": "",
+	"content": "Giới thiệu Mục tiêu Trong thời đại hiện nay, các mối đe dọa bảo mật đối với cơ sở hạ tầng đám mây đang ngày càng trở nên phổ biến và tinh vi. Dự án này được thiết kế nhằm xây dựng một hệ thống phát hiện và phản ứng tự động với các hành vi đáng ngờ trên EC2, giúp giảm thiểu rủi ro và tăng cường bảo mật cho hệ thống.\nTổng quan về hệ thống Hệ thống sử dụng sự kết hợp của các dịch vụ AWS để đảm bảo quá trình giám sát và phản ứng được thực hiện tự động và hiệu quả:\nAmazon GuardDuty: Phát hiện các hành vi bất thường trên EC2 như port scan, truy cập trái phép, v.v. Amazon EventBridge: Nhận sự kiện từ GuardDuty và kích hoạt xử lý tự động. AWS Lambda: Xử lý các cảnh báo từ GuardDuty, thực hiện hành động như dừng EC2 hoặc gửi thông báo. Amazon SNS: Gửi cảnh báo đến quản trị viên qua email hoặc tin nhắn. Các dịch vụ này hoạt động phối hợp để tạo ra một hệ thống giám sát – phản ứng – cảnh báo khép kín và linh hoạt.\nCác trường hợp sử dụng Phát hiện và phản ứng với tấn công dò quét cổng (Port Scan). Dừng EC2 instance khi phát hiện hành vi nghi ngờ. Gửi thông báo tức thì đến quản trị viên khi có sự kiện bảo mật. Tự động hóa toàn bộ quy trình phản ứng sự cố. Hệ thống không chỉ giúp phát hiện kịp thời các mối đe dọa mà còn giảm thiểu thiệt hại bằng cách chủ động thực thi các biện pháp phòng ngừa – đảm bảo an toàn cho hạ tầng đám mây.\n"
+},
+{
+	"uri": "//localhost:1313/vi/2-prerequiste/2.1-createec2/2.1.2-createtargetec2linux/",
+	"title": " Tạo TargetEC2",
+	"tags": [],
+	"description": "",
+	"content": "Tạo EC2 TargetEC2 Truy cập vào AWS EC2 Console để bắt đầu quá trình tạo EC2 mới.\nTrên giao diện điều khiển EC2, chọn Instances và nhấn Launch instances ở góc trên bên phải. Trong màn hình Launch an instance: Chọn Name cho instance là TargetEC2. Chọn Amazon Linux tại phần Application and OS Images (Amazon Machine Image). Trong Amazon Machine Image (AMI): Click Select để chọn hệ điều hành Amazon Linux 2. Chọn Amazon Linux 2 AMI. Trong Instance Type: Chọn t2.micro (để sử dụng trong Free Tier). Nhấn Create new key pair trong phần Key pair (login). Trong mục Create Key Pair: Nhập Key pair name là TargetEC2Key. Chọn RSA cho Key pair type. Chọn định dạng .pem cho Private key file format (để sử dụng với OpenSSH). Nhấn Create key pair. Trong phần Network Settings chọn Edit:\nTại VPC, chọn SecurityVPC. Tại Subnet, chọn SecurityVPC-subnet-public1-ap-southeast-1a. Đảm bảo Auto-assign public IP được chọn là Enable. Tại phần Firewall (security groups): Chọn Create security group. Nhập tên SecuritySG cho security group. Mô tả: Allow SSH for attack simulation. Cấu hình các inbound rules với SSH cho phép truy cập từ 0.0.0.0/0. Tại Inbound Security Group Rules, trong phần Network Settings thêm một rule mới: Type: Chọn ssh. Protocol: Chọn TCP. Port Range: Nhập 22. Source: Chọn Anywhere (hoặc nhập 0.0.0.0/0 để cho phép tất cả địa chỉ IP). Description (tùy chọn): Có thể nhập mô tả như SSH for attack simulation. Sau khi hoàn tất, nhấn Launch instance trong phần Summary để khởi tạo EC2. Sau khi nhấn Launch instance và chờ đợi từ 1 đến 2 phút bạn sẽ thấy trạng thái của EC2 chuyển thành Running là máy ảo đã tạo thành công. "
+},
+{
+	"uri": "//localhost:1313/vi/2-prerequiste/",
+	"title": "Các bước chuẩn bị",
+	"tags": [],
+	"description": "",
+	"content": "\rBạn cần tạo 2 instance Linux trên subnet công cộng để triển khai bài lab này. Các máy này sẽ lần lượt là target EC2 và attack EC2.\nĐể tìm hiểu cách tạo EC2 instance và VPC với subnet công cộng, bạn có thể tham khảo các tài liệu sau:\nGiới thiệu về Amazon EC2 Làm việc với Amazon VPC Trong bước chuẩn bị này, chúng ta sẽ thực hiện cấu hình giải pháp bảo mật cho EC2 bằng cách sử dụng GuardDuty. Cụ thể, chúng ta sẽ tạo hai máy chủ EC2:\ntarget EC2 (máy mục tiêu) sẽ là hệ thống cần được bảo vệ, với IP bên ngoài để kiểm tra khả năng bảo mật. attack EC2 (máy tấn công) sẽ giả lập các cuộc tấn công và quét các cổng mở từ IP bên ngoài vào target EC2. Nội dung Tạo VPC và EC2 Instance "
+},
+{
+	"uri": "//localhost:1313/vi/5-automateresponseswithlambda/5.2-createeventbridgerule/",
+	"title": "Tạo EventBridge Rule nối GuardDuty đến Lambda",
+	"tags": [],
+	"description": "",
+	"content": "Tạo EventBridge Rule nối GuardDuty đến Lambda Truy cập vào AWS EventBridge Console để bắt đầu tạo EventBridge Rule mới.\nTrên giao diện điều khiển EventBridge, chọn Rules ở menu bên trái và nhấn Create rule ở góc trên bên phải. Trong màn hình Define rule detail: Name: Nhập tên rule là GuardDutyTriggerLambda. Description: Thêm mô tả cho rule như Trigger Lambda when GuardDuty detects a security finding. Event bus: Chọn default. Rule type: Chọn Rule with an event pattern. Chọn Next để tiếp tục Trong phần **Build event pattern **, chọn Use pattern form để tạo sự kiện từ mẫu có sẵn.\nEvent source: Chọn AWS services. AWS service: Chọn GuardDuty. Event type: Chọn GuardDuty Finding. Sau khi cấu hình xong, bạn sẽ thấy sự kiện GuardDuty Finding sẽ được gửi đến Lambda function khi có mối đe dọa. Event Pattern sẽ hiển thị như sau: { \u0026#34;source\u0026#34;: [\u0026#34;aws.guardduty\u0026#34;], \u0026#34;detail-type\u0026#34;: [\u0026#34;GuardDuty Finding\u0026#34;] } Tại mục Select target : Trong phần Select a target, chọn AWS service. Trong phần Target location, chọn Target in this account. Tiếp theo, chọn Lambda function trong phần Function và nhập tên của hàm Lambda là HandleGuardDutyFinding. Trong phần Configure version/alias, bạn có thể để mặc định nếu không cần chọn phiên bản hoặc alias. Cấu hình Permissions: Chọn Use execution role (recommended) để Lambda có quyền truy cập các tài nguyên cần thiết. Chọn Create a new role for this specific resource nếu bạn muốn tạo một role mới cho sự kiện này. Đặt tên cho Execution role là Amazon_EventBridge_Invoke_Lambda. Sau khi cấu hình xong, nhấn Next để tiếp tục. Ta nhấn Next một lần nữa và nhấn Create rule d9e73 hoàn tất quá trình tạo. "
+},
+{
+	"uri": "//localhost:1313/vi/4-sendnotificationswithsns/4.2-createsnssubscription/",
+	"title": "Tạo SNS Subscription",
+	"tags": [],
+	"description": "",
+	"content": "Tạo SNS Subscription Truy cập vào Amazon SNS Console và chọn Subscriptions từ menu bên trái. Chọn Create subscription. Trong màn hình Create subscription: Chọn Topic ARN từ menu xổ xuống, tìm và chọn SNS Topic mà bạn đã tạo ở bước trước (ví dụ: GuardDutyAlertTopic). Chọn Protocol (ví dụ: Email nếu bạn muốn nhận thông báo qua email). Nhập Endpoint là địa chỉ mà bạn muốn nhận thông báo (ví dụ: địa chỉ email của bạn). Nhấn Create subscription để tạo subscription. Sau khi tạo subscription xong, bạn sẽ nhận được một email xác nhận. Trong email, bạn sẽ thấy thông báo: Nhấn Confirm subscription để được xác nhận Khi nhấn vào nó hiện ra bảng dưới đây là đã hoàn tất xác nhận Bạn cần nhấn vào liên kết \u0026ldquo;click here to unsubscribe\u0026rdquo; nếu không muốn nhận thông báo nữa. Sau khi xác nhận, bạn đã hoàn tất việc tạo SNS Subscription và có thể nhận thông báo từ SNS khi có sự kiện mới từ GuardDuty. "
+},
+{
+	"uri": "//localhost:1313/vi/2-prerequiste/2.1-createec2/2.1.3-createattackec2linux/",
+	"title": " Tạo AttackEC2",
+	"tags": [],
+	"description": "",
+	"content": "Tạo EC2 AttackEC2 Truy cập vào AWS EC2 Console để bắt đầu quá trình tạo EC2 mới.\nTrên giao diện điều khiển EC2, chọn Instances và nhấn Launch instances ở góc trên bên phải. Trong màn hình Launch an instance: Chọn Name cho instance là AttackEC2. Chọn Amazon Linux tại phần Application and OS Images (Amazon Machine Image). Trong Amazon Machine Image (AMI): Click Select để chọn hệ điều hành Amazon Linux 2. Chọn Amazon Linux 2 AMI. (sử dụng Free Tier) Trong Instance Type: Chọn t2.micro (sử dụng Free Tier). Nhấn Create new key pair trong phần Key pair (login). Trong mục Create Key Pair: Nhập Key pair name là AttackEC2Key. Chọn RSA cho Key pair type. Chọn định dạng .pem cho Private key file format (để sử dụng với OpenSSH). Nhấn Create key pair. Trong phần Network Settings chọn Edit:\nTại VPC, chọn SecurityVPC. Tại Subnet, chọn SecurityVPC-subnet-public1-ap-southeast-1a. Đảm bảo Auto-assign public IP được chọn là Enable. Tại phần Firewall (security groups): Chọn Create security group. Nhập tên AttackSG cho security group. Mô tả: Allow SSH for attack simulation. Cấu hình các inbound rules với SSH cho phép truy cập từ 0.0.0.0/0. Tại Inbound Security Group Rules, trong phần Network Settings thêm một rule mới: Type: Chọn ssh. Protocol: Chọn TCP. Port Range: Nhập 22. Source: Chọn Anywhere (hoặc nhập 0.0.0.0/0 để cho phép tất cả địa chỉ IP). Description (tùy chọn): Có thể nhập mô tả như SSH for attack simulation. Sau khi hoàn tất, nhấn Launch instance trong phần Summary để khởi tạo EC2. Sau khi nhấn Launch instance và chờ đợi từ 1 đến 2 phút bạn sẽ thấy trạng thái của EC2 chuyển thành Running là máy ảo đã tạo thành công. "
+},
+{
+	"uri": "//localhost:1313/vi/3-threatdetectionwithguardduty/3.1-enableguardduty/",
+	"title": "Kích hoạt AWS GuardDuty",
+	"tags": [],
+	"description": "",
+	"content": "\rKích hoạt AWS GuardDuty để bắt đầu giám sát và phát hiện các mối đe dọa trong môi trường AWS của bạn.\nCách kích hoạt GuardDuty Khi bạn kích hoạt GuardDuty, hệ thống sẽ bắt đầu phân tích các hoạt động trên EC2, S3, và các dịch vụ AWS khác để phát hiện mối đe dọa và hành vi đáng ngờ. Đây là một bước quan trọng để đảm bảo rằng các tài nguyên AWS của bạn được bảo vệ tối ưu.\nCác bước kích hoạt AWS GuardDuty: Đăng nhập vào AWS Management Console: Truy cập vào AWS GuardDuty Console trong AWS Management Console. Chọn Amazon GuardDuty - all features sau đó nhấn vào \u0026ldquo;Get started\u0026rdquo; tiến hành sang bước tiếp theo. Nhấn vào nút \u0026ldquo;Enable GuardDuty\u0026rdquo; để kích hoạt dịch vụ: Account mới thì AWS sẽ cho dùng thử miễn phí 30 ngày nha.\nNếu là lần đầu sử dụng, bạn sẽ thấy một nút Enable GuardDuty. Nhấn vào nút này để bắt đầu quá trình kích hoạt. Xác nhận cấu hình và bắt đầu quét: GuardDuty sẽ tự động bắt đầu quét các tài nguyên của bạn và bắt đầu giám sát các hành động trên EC2, S3, và các dịch vụ AWS khác. Sau khi kích hoạt, GuardDuty sẽ bắt đầu phát hiện các mối đe dọa tiềm ẩn và gửi cảnh báo nếu có bất kỳ hành vi đáng ngờ nào. Kiểm tra các findings: Sau khi GuardDuty hoạt động, bạn có thể truy cập mục Findings để xem các cảnh báo và phát hiện mối đe dọa. Tại đây, bạn sẽ thấy các chi tiết về các mối đe dọa đã được phát hiện. Tài liệu tham khảo: AWS GuardDuty Official Documentation How to use AWS GuardDuty "
+},
+{
+	"uri": "//localhost:1313/vi/3-threatdetectionwithguardduty/",
+	"title": "Phát hiện mối đe dọa với GuardDuty",
+	"tags": [],
+	"description": "",
+	"content": "\rĐể phát hiện mối đe dọa và đảm bảo bảo mật cho EC2, chúng ta sẽ kích hoạt AWS GuardDuty.\nGiới thiệu về GuardDuty GuardDuty là dịch vụ bảo mật của AWS giúp phát hiện các mối đe dọa tiềm ẩn và hành vi đáng ngờ trong môi trường AWS. Dịch vụ này giám sát các hoạt động của EC2, S3 và các dịch vụ AWS khác, cung cấp các cảnh báo khi phát hiện mối đe dọa.\nLợi ích:\nPhát hiện các mối đe dọa: GuardDuty giúp phát hiện các cuộc tấn công như SSH brute force, các kết nối trái phép, hoặc các hành vi bất thường. Bảo mật tốt hơn: GuardDuty sẽ giúp bạn bảo vệ EC2 instances, S3 buckets và các dịch vụ AWS khác bằng cách phát hiện các hành vi đáng ngờ. Nội dung Kích hoạt AWS GuardDuty "
+},
+{
+	"uri": "//localhost:1313/vi/4-sendnotificationswithsns/",
+	"title": "Gửi thông báo với SNS Topic",
+	"tags": [],
+	"description": "",
+	"content": "\rAmazon Simple Notification Service (SNS) là một dịch vụ tin nhắn đám mây mạnh mẽ của AWS, giúp gửi thông báo đến các hệ thống hoặc người dùng thông qua các kênh khác nhau như email, SMS, HTTP/HTTPS endpoints hoặc các dịch vụ khác. SNS hỗ trợ việc gửi thông báo theo thời gian thực, có khả năng mở rộng cao và dễ tích hợp với các dịch vụ AWS khác như Lambda và GuardDuty.\nGiới thiệu về SNS SNS là dịch vụ của AWS giúp bạn gửi thông báo đến các hệ thống hoặc người dùng thông qua email, SMS, HTTP/HTTPS endpoints hoặc các dịch vụ AWS khác. SNS giúp tăng cường khả năng phản ứng nhanh chóng đối với các sự kiện quan trọng hoặc mối đe dọa tiềm ẩn, đảm bảo hệ thống luôn được theo dõi và bảo vệ.\nLợi ích:\nGửi thông báo nhanh chóng: SNS cho phép gửi thông báo đến một số lượng lớn người nhận trong thời gian ngắn. Tích hợp dễ dàng: SNS có thể dễ dàng tích hợp với các dịch vụ AWS như Lambda, CloudWatch, và GuardDuty để tự động gửi thông báo khi có sự kiện xảy ra. Nội dung Tạo SNS Topic Tạo SNS Subscription "
+},
+{
+	"uri": "//localhost:1313/vi/5-automateresponseswithlambda/",
+	"title": "Tự động phản ứng với AWS Lambda",
+	"tags": [],
+	"description": "",
+	"content": "\rAWS Lambda giúp bạn tự động hóa các phản ứng khi có sự kiện xảy ra trong AWS. Bạn có thể sử dụng Lambda để kích hoạt các hành động tự động khi GuardDuty phát hiện các mối đe dọa.\nGiới thiệu về AWS Lambda AWS Lambda là một dịch vụ điện toán serverless của AWS cho phép bạn chạy mã mà không cần phải quản lý máy chủ. Lambda giúp bạn xử lý các sự kiện theo thời gian thực và thực hiện các hành động tự động khi có sự kiện từ các dịch vụ AWS khác như GuardDuty, S3, và SNS.\nLợi ích:\nKhông cần quản lý máy chủ: Lambda chạy mã tự động khi có sự kiện mà không cần bạn phải quản lý server. Khả năng mở rộng tự động: Lambda tự động mở rộng để xử lý các yêu cầu, giúp tiết kiệm tài nguyên và chi phí. Tích hợp với các dịch vụ AWS: Lambda có thể dễ dàng tích hợp với các dịch vụ AWS như GuardDuty để thực hiện hành động khi có mối đe dọa được phát hiện. Nội dung Tạo hàm Lambda Tạo EventBridge Rule kết nối GuardDuty với Lambda "
+},
+{
+	"uri": "//localhost:1313/vi/6-testinganddemo/",
+	"title": "Demo và Kiểm thử",
+	"tags": [],
+	"description": "",
+	"content": "Mô hình Demo Triển khai Giải pháp Bảo mật AWS sử dụng GuardDuty, Lambda, SNS và EventBridge Trong mô hình này, chúng ta sẽ triển khai giải pháp bảo mật sử dụng GuardDuty, Lambda, SNS, và EventBridge. Hai máy chủ EC2 sẽ được tạo: một máy target-ec2 (máy mục tiêu) để kiểm tra khả năng bảo mật và một máy attack-ec2 (máy hacker) với IP đáng ngờ. Khi GuardDuty phát hiện mối đe dọa từ attack-ec2, EventBridge sẽ kích hoạt Lambda để thực hiện hành động tự động. SNS sẽ gửi thông báo cảnh báo đến người quản trị qua email, giúp theo dõi và phản ứng nhanh chóng với sự kiện bảo mật.\nKết nối máy EC2 Bạn có thể tham khảo cách kết nối EC2 bằng MobaXterm thay vì sử dụng GIT. Trong trường hợp này, chúng ta sẽ dùng MobaXterm để kết nối với máy EC2. Nếu bạn chưa biết cách, bạn có thể tham khảo hướng dẫn tại Kết nối Linux instance với MobaXterm.\n**Kết nối máy target-ec2\n**Kết nối máy attack-ec2\n**Cài đặt nmap cho máy attack-ec2\nTrên máy attack-ec2, bạn cần cài đặt công cụ nmap để thực hiện quét cổng. Để cài đặt nmap, sử dụng lệnh sau:\nsudo yum install nmap -y Quét cổng của máy target-ec2 từ máy attack-ec2\nSau khi cài đặt thành công nmap, bạn có thể quét cổng của máy target-ec2 bằng cách sử dụng lệnh sau trên máy attack-ec2:\nnmap -Pn -p 1-100 54.255.243.8 Ta nhập khoảng 1 đến 10 lần lệnh này quét các cổng của máy target-ec2 Kết quả sau khi portscan thành công : Kết quả sau khi port scan Sau khi portscan thành công thì chờ một khoảng thời gian để GuarduDuty sẽ phát hiện ra như hình Đây là cảnh báo EC2 instance i-0d87fe691868ad547 đang thực hiện hành vi port scan outbound đến máy chủ từ xa có IP 54.255.243.8 (từ máy attack đến máy target) Đồng thời bạn cũng sẽ nhận được một mail cảnh báo do bạn đã thiết lập ở phần tạo hàm lambda Thông báo : GuardDuty phát hiện hành vi đáng ngờ. Đang dừng EC2: i-0a40480e4ffe67c36 Cuối cùng là máy EC2 TargetEC2 đã tắt vì phát hiện hành vi đáng ngờ Trong bài kiểm thử này, chúng ta sẽ thực hiện quét cổng (port scan) nhằm để GuardDuty phát hiện mối đe dọa, sau đó sử dụng Lambda để tự động tắt máy EC2. Ngoài ra, bạn cũng có thể thử nghiệm với các phương án khác như tấn công DDoS hay các hình thức tấn công khác để đánh giá khả năng phát hiện của GuardDuty, đồng thời kiểm tra cách Lambda phản ứng với nhiều loại mối nguy khác nhau.\n"
+},
+{
+	"uri": "//localhost:1313/vi/7-cleanup/",
+	"title": "Dọn dẹp tài nguyên",
+	"tags": [],
+	"description": "",
+	"content": "Dọn dẹp tài nguyên AWS Sau khi hoàn thành quá trình triển khai và kiểm thử, chúng ta cần tiến hành dọn dẹp tài nguyên để tránh phát sinh chi phí không cần thiết. Dưới đây là các bước để dọn dẹp các tài nguyên AWS đã sử dụng:\nXóa EC2 Instances\nTruy cập vào AWS EC2 Console để xóa các instance không còn sử dụng. Chọn vào Instances trong AWS EC2 Console. Chọn cả 2 instance hacker-ec2 và user-ec2. Chọn Instance state, sau đó chọn Terminate instance. Chọn Terminate để xác nhận việc xóa. Xóa SNS Topic\nTruy cập vào AWS SNS Console để xóa topic GuardDutyAlertTopic. Chọn Topics, tìm topic GuardDutyAlertTopic, nhấn Delete. Xác nhận lại nhập delete me nhấn delete. Xóa Lambda Function\nTruy cập vào AWS Lambda Console để xóa hàm Lambda HandleGuardDutyFinding. Chọn Functions, tìm hàm HandleGuardDutyFinding, nhấn Delete. Xác nhận lại nhập confirm nhấn delete. Xóa EventBridge Rule\nTruy cập vào AWS EventBridge Console để xóa rule GuardDutyTriggerLambda. Chọn Rules, tìm rule GuardDutyTriggerLambda, nhấn Delete. Xác nhận lại nhập delete nhấn delete. Xóa IAM Role\nTruy cập vào IAM Console để xóa role HandleGuardDutyFinding-role. Chọn Roles, tìm role HandleGuardDutyFinding-role, nhấn Delete. Xác nhận lại nhập name role nhấn delete. Xóa VPC\nTruy cập vào AWS VPC Console để xóa SecurityVPC. Chọn Your VPCs, tìm VPC SecurityVPC, sau đó chọn Actions. Chọn Delete VPC và xác nhận. Xóa GuardDuty\nTruy cập vào AWS GuardDuty Console để xóa dịch vụ GuardDuty. Chọn Settings trong GuardDuty Console. Click Disable, sau đó click Disable để xác nhận. Lưu ý Sau khi xóa các tài nguyên, bạn cũng có thể kiểm tra lại tài khoản AWS để chắc chắn rằng không có tài nguyên nào đang được giữ lại và phát sinh chi phí.\nViệc dọn dẹp tài nguyên sau khi hoàn thành kiểm thử là rất quan trọng để tránh chi phí không cần thiết. Đảm bảo rằng tất cả các dịch vụ đã được xóa và không còn tài nguyên nào bị bỏ quên.\n"
+},
+{
+	"uri": "//localhost:1313/vi/",
+	"title": "AWS System Manager",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "//localhost:1313/vi/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "//localhost:1313/vi/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]
