@@ -1,5 +1,12 @@
 [
 {
+	"uri": "https://khanhtuan0705.github.io/vi/",
+	"title": "Bảo mật Tự động với AWS GuardDuty và Lambda",
+	"tags": [],
+	"description": "",
+	"content": "Bảo mật Tự động với AWS GuardDuty và Lambda Tổng Quan Trong bài lab này, bạn sẽ học cách thiết lập một hệ thống phát hiện và phản ứng với tấn công tự động sử dụng các dịch vụ AWS như GuardDuty, Lambda, SNS và EC2. Hệ thống sẽ phát hiện hành vi đáng ngờ, dừng các instance EC2 và gửi thông báo qua SNS khi phát hiện một cuộc tấn công.\nNội Dung Giới thiệu Các bước chuẩn bị Phát hiện mối đe dọa với GuardDuty Gửi thông báo với SNS Topic Tự động phản ứng với AWS Lambda Demo và Kiểm thử Dọn dẹp tài nguyên "
+},
+{
 	"uri": "https://khanhtuan0705.github.io/vi/2-prerequiste/2.1-createec2/",
 	"title": "Chuẩn bị VPC và EC2",
 	"tags": [],
@@ -110,13 +117,6 @@
 	"tags": [],
 	"description": "",
 	"content": "Dọn dẹp tài nguyên AWS Sau khi hoàn thành quá trình triển khai và kiểm thử, chúng ta cần tiến hành dọn dẹp tài nguyên để tránh phát sinh chi phí không cần thiết. Dưới đây là các bước để dọn dẹp các tài nguyên AWS đã sử dụng:\nXóa EC2 Instances\nTruy cập vào AWS EC2 Console để xóa các instance không còn sử dụng. Chọn vào Instances trong AWS EC2 Console. Chọn cả 2 instance hacker-ec2 và user-ec2. Chọn Instance state, sau đó chọn Terminate instance. Chọn Terminate để xác nhận việc xóa. Xóa SNS Topic\nTruy cập vào AWS SNS Console để xóa topic GuardDutyAlertTopic. Chọn Topics, tìm topic GuardDutyAlertTopic, nhấn Delete. Xác nhận lại nhập delete me nhấn delete. Xóa Lambda Function\nTruy cập vào AWS Lambda Console để xóa hàm Lambda HandleGuardDutyFinding. Chọn Functions, tìm hàm HandleGuardDutyFinding, nhấn Delete. Xác nhận lại nhập confirm nhấn delete. Xóa EventBridge Rule\nTruy cập vào AWS EventBridge Console để xóa rule GuardDutyTriggerLambda. Chọn Rules, tìm rule GuardDutyTriggerLambda, nhấn Delete. Xác nhận lại nhập delete nhấn delete. Xóa IAM Role\nTruy cập vào IAM Console để xóa role HandleGuardDutyFinding-role. Chọn Roles, tìm role HandleGuardDutyFinding-role, nhấn Delete. Xác nhận lại nhập name role nhấn delete. Xóa VPC\nTruy cập vào AWS VPC Console để xóa SecurityVPC. Chọn Your VPCs, tìm VPC SecurityVPC, sau đó chọn Actions. Chọn Delete VPC và xác nhận. Xóa GuardDuty\nTruy cập vào AWS GuardDuty Console để xóa dịch vụ GuardDuty. Chọn Settings trong GuardDuty Console. Click Disable, sau đó click Disable để xác nhận. Lưu ý Sau khi xóa các tài nguyên, bạn cũng có thể kiểm tra lại tài khoản AWS để chắc chắn rằng không có tài nguyên nào đang được giữ lại và phát sinh chi phí.\nViệc dọn dẹp tài nguyên sau khi hoàn thành kiểm thử là rất quan trọng để tránh chi phí không cần thiết. Đảm bảo rằng tất cả các dịch vụ đã được xóa và không còn tài nguyên nào bị bỏ quên.\n"
-},
-{
-	"uri": "https://khanhtuan0705.github.io/vi/",
-	"title": "AWS System Manager",
-	"tags": [],
-	"description": "",
-	"content": ""
 },
 {
 	"uri": "https://khanhtuan0705.github.io/vi/categories/",

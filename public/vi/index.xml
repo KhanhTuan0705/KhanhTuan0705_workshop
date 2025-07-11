@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>AWS System Manager</title>
+    <title>Bảo mật Tự động với AWS GuardDuty và Lambda on AWS System Manager</title>
     <link>https://khanhtuan0705.github.io/vi/</link>
-    <description>Recent content on AWS System Manager</description>
+    <description>Recent content in Bảo mật Tự động với AWS GuardDuty và Lambda on AWS System Manager</description>
     <generator>Hugo</generator>
     <language>vi</language>
     <lastBuildDate></lastBuildDate>
